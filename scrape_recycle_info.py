@@ -11,7 +11,7 @@ elems = driver.find_elements_by_class_name("waste-hit")
 
 id = 0
 for item in elems:
-    print("-----------------------")
+    # print("-----------------------")
 
     name = item.get_attribute("data-item-name")
     synonyms = item.get_attribute("data-item-synonyms")
@@ -26,14 +26,14 @@ for item in elems:
     recycle_place = info.find_elements_by_xpath('.//div[@class="table-cell wiki-search-info"]/*')
     for item in recycle_place:
         attr = driver.execute_script('var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;', item)
-        print(attr)
+        # print(attr)
 
     data.update({id: {"name": name, "synonyms": synonyms, "type": type, "hazardous_materials": hazardous_materials}})
-    print(name, synonyms, type, hazardous_materials)
+    # print(name, synonyms, type, hazardous_materials)
 
     id += 1
 
 print(len(elems))
-# print(data)
+print(data)
 
 driver.quit()
