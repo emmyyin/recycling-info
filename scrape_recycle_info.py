@@ -17,6 +17,7 @@ for item in elems:
     synonyms = item.get_attribute("data-item-synonyms")
     type = item.get_attribute("data-item-type")
 
+    # FIX: xpath is wrong
     info = item.find_element_by_xpath('.//*[@class="toggle-target"]')
     associated_hazardous_materials = info.find_elements_by_xpath('.//*[contains(@id, "waste-hit")]/div/div[contains(@class ,"hazardous-material")]')
     hazardous_materials = []
