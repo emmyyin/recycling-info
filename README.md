@@ -1,6 +1,6 @@
 # recycling-info
 
-This is a Python-script to extract data regarding how to recycle materials. The data is gathered from the swedish website: https://www.stockholmvattenochavfall.se/avfall-och-atervinning/sortera-dina-sopor/sorteringsguiden/.
+This is a Python program to extract data about how to recycle materials. The data is gathered from a [swedish website](https://www.stockholmvattenochavfall.se/avfall-och-atervinning/sortera-dina-sopor/sorteringsguiden/). 
 
 ### TODO
 
