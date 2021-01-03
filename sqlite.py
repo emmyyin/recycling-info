@@ -9,7 +9,6 @@ def connect(path):
         print("Connected")
     except Error as e:
         print(f"The error '{e}' occurred")
-
     return connection
 
 def update(connection, query):
