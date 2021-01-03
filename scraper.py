@@ -7,9 +7,6 @@ URL = "https://www.stockholmvattenochavfall.se/avfall-och-atervinning/sortera-di
 DB = "database.db"
 
 # Temp for database tables
-all_recycleables = {}
-all_synonyms = {}
-all_types = {}
 all_recycle_places = {}
 all_hazardous_materials = {}
 
@@ -38,15 +35,11 @@ def create_database(connection):
 
 
 def store_recyclable(id, name, type_id, hazardous_materials_ids, connection):
-    sqlite.update(connection, f"INSERT INTO RECYCLEABLES (ID,NAME,TYPE,HAZARDUOS) \
-        VALUES ({id}, '{name}', {type_id}, 'PLACEHOLDER')")
-    # all_recycleables.update({id: {"name": name, "type": type_id, "hazardous_materials": hazardous_materials_ids}})
+    sqlite.update(connection, f"INSERT INTO RECYCLEABLES (ID,NAME,TYPE,HAZARDUOS) VALUES ({id}, '{name}', {type_id}, 'PLACEHOLDER')")
 
 def store_synonyms(synonyms, id, connection):
     for synonym in synonyms:
-        sqlite.update(connection, f"INSERT INTO SYNONYMS (ID,NAME) \
-            VALUES ({id}, '{synonym}')")
-        # all_synonyms.update({synonym: id})
+        sqlite.update(connection, f"INSERT INTO SYNONYMS (ID,NAME) VALUES ({id}, '{synonym}')")
 
 # TODO: Store in database
 def find_hazardous_materials(info):
@@ -74,11 +67,10 @@ def find_recycle_places(info, driver):
 def set_type(type, connection):
     result = sqlite.read(connection, f"SELECT id from TYPES where NAME = '{type}' ")
     if len(result) == 0:
-        sqlite.update(connection, f"INSERT INTO TYPES (NAME) \
-            VALUES ('{type}')")
-    # if type not in all_types:
-    #     all_types.update({type: len(all_types)})
-    return sqlite.read(connection, f"SELECT id from TYPES where NAME = '{type}' ")[0][0]
+        sqlite.update(connection, f"INSERT INTO TYPES (NAME) VALUES ('{type}')")
+        return sqlite.read(connection, f"SELECT id from TYPES where NAME = '{type}' ")[0][0]
+    else:
+        return result[0][0]
 
 
 def extract_info(connection):
@@ -113,11 +105,6 @@ def extract_info(connection):
         store_synonyms(synonyms.split(","), id, connection)
 
         id += 1
-
-    # print(all_recycleables)
-    # print(all_synonyms)
-    # print(all_types)
-    # print(all_hazardous_materials)
 
     driver.quit()
 
