@@ -12,34 +12,50 @@ all_hazardous_materials = {}
 
 def create_database(connection):
     sqlite.update(connection, '''CREATE TABLE RECYCLEABLES
-        (ID INT PRIMARY KEY     NOT NULL,
-        NAME        TEXT    NOT NULL,
-        TYPE        INT     NOT NULL,
-        HAZARDUOS   TEXT);''')
+        (ID     INT PRIMARY KEY     NOT NULL,
+        NAME    TEXT                NOT NULL,
+        TYPE    INT                 NOT NULL);''')
 
     sqlite.update(connection, '''CREATE TABLE SYNONYMS
         (ID     INT     NOT NULL,
         NAME    TEXT    NOT NULL);''')
 
     sqlite.update(connection, '''CREATE TABLE TYPES
-        (ID INTEGER PRIMARY KEY AUTOINCREMENT,
+        (ID     INTEGER PRIMARY KEY AUTOINCREMENT,
         NAME    TEXT    NOT NULL);''')
 
     sqlite.update(connection, '''CREATE TABLE RECYCLE_PLACES
-        (ID INT PRIMARY KEY     NOT NULL,
-        NAME    TEXT    NOT NULL);''')
+        (ID     INT PRIMARY KEY     NOT NULL,
+        NAME    TEXT                NOT NULL);''')
 
-    sqlite.update(connection, '''CREATE TABLE HAZARDUOS_MATERIALS
-        (ID INT PRIMARY KEY     NOT NULL,
-        NAME    TEXT    NOT NULL);''')
+    sqlite.update(connection, '''CREATE TABLE ALL_HAZARDUOS_MATERIALS
+        (ID     INT PRIMARY KEY     NOT NULL,
+        NAME    TEXT                NOT NULL);''')
+
+    sqlite.update(connection, '''CREATE TABLE ASSOCIATED_HAZARDUOS_MATERIALS
+        (ITEM       INT     NOT NULL,
+        MATERIAL    INT     NOT NULL);''')
 
 
-def store_recyclable(id, name, type_id, hazardous_materials_ids, connection):
-    sqlite.update(connection, f"INSERT INTO RECYCLEABLES (ID,NAME,TYPE,HAZARDUOS) VALUES ({id}, '{name}', {type_id}, 'PLACEHOLDER')")
+def set_type(type, connection):
+    """Return the type id"""
+    result = sqlite.read(connection, f"SELECT id from TYPES where NAME = '{type}' ")
+    if len(result) == 0:
+        sqlite.update(connection, f"INSERT INTO TYPES (NAME) VALUES ('{type}')")
+        return sqlite.read(connection, f"SELECT id from TYPES where NAME = '{type}' ")[0][0]
+    else:
+        return result[0][0]
+
+def store_recyclable(id, name, type_id, connection):
+    sqlite.update(connection, f"INSERT INTO RECYCLEABLES (ID,NAME,TYPE) VALUES ({id}, '{name}', {type_id})")
 
 def store_synonyms(synonyms, id, connection):
     for synonym in synonyms:
         sqlite.update(connection, f"INSERT INTO SYNONYMS (ID,NAME) VALUES ({id}, '{synonym}')")
+
+def store_associated_hazarduos_materials(id, hazardous_materials, connection):
+    for material in hazardous_materials:
+        sqlite.update(connection, f"INSERT INTO ASSOCIATED_HAZARDUOS_MATERIALS (ITEM,MATERIAL) VALUES ({id}, {material})")
 
 # TODO: Store in database
 def find_hazardous_materials(info):
@@ -63,14 +79,6 @@ def find_recycle_places(info, driver):
     for item in info:
         attr = driver.execute_script('var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;', item)
         # print(attr)
-
-def set_type(type, connection):
-    result = sqlite.read(connection, f"SELECT id from TYPES where NAME = '{type}' ")
-    if len(result) == 0:
-        sqlite.update(connection, f"INSERT INTO TYPES (NAME) VALUES ('{type}')")
-        return sqlite.read(connection, f"SELECT id from TYPES where NAME = '{type}' ")[0][0]
-    else:
-        return result[0][0]
 
 
 def extract_info(connection):
@@ -98,10 +106,8 @@ def extract_info(connection):
         # TODO: Get all recycle places
         find_recycle_places(info.find_elements_by_xpath('.//div[@class="table-cell wiki-search-info"]/*'), driver)
 
-        # Add recycable item
-        store_recyclable(id, name, this_type_id, hazardous_materials_ids, connection)
-
-        # Add associated synonyms of item
+        store_recyclable(id, name, this_type_id, connection)
+        store_associated_hazarduos_materials(id, hazardous_materials_ids, connection)
         store_synonyms(synonyms.split(","), id, connection)
 
         id += 1
@@ -109,13 +115,11 @@ def extract_info(connection):
     driver.quit()
 
 
-
 def main():
     connection = sqlite.connect(DB)
     create_database(connection)
     extract_info(connection)
     connection.close()
-
 
 if __name__ == "__main__":
     main()
