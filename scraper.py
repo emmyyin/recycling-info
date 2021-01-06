@@ -10,6 +10,7 @@ DB = "database.db"
 all_recycle_places = {}
 
 def create_database(connection):
+    '''Initialize the database, creating the tables'''
     sqlite.update(connection, '''CREATE TABLE RECYCLEABLES
         (ID     INT PRIMARY KEY     NOT NULL,
         NAME    TEXT                NOT NULL,
@@ -57,10 +58,12 @@ def store_associated_hazarduos_materials(id, hazardous_materials, connection):
         sqlite.update(connection, f"INSERT INTO ASSOCIATED_HAZARDUOS_MATERIALS (ITEM,MATERIAL) VALUES ({id}, {material})")
 
 def find_hazardous_materials(info, connection):
+    '''Return ids of the associated hazardous materials'''
     associated_hazardous_materials = info.find_elements_by_xpath('.//div[contains(@class ,"hazardous-material")]')
     hazardous_materials_ids = []
     for material_info in associated_hazardous_materials:
         material = material_info.get_attribute("title")
+        # Check if material is in database, otherwise store it
         result = sqlite.read(connection, f"SELECT id from ALL_HAZARDUOS_MATERIALS where NAME = '{material}' ")
         if len(result) == 0:
             sqlite.update(connection, f"INSERT INTO ALL_HAZARDUOS_MATERIALS (NAME) VALUES ('{material}')")
