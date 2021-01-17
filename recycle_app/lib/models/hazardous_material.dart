@@ -7,4 +7,9 @@ class HazardousMaterial {
   Map<String, dynamic> toMap() {
     return {'id': id, 'name': name};
   }
+
+  HazardousMaterial.fromMap(Map<String, dynamic> map) {
+    id = map["id"];
+    name = map["name"];
+  }
 }
