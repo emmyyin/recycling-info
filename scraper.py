@@ -1,13 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import sqlite
-
+import firebase_connect
 
 URL = "https://www.stockholmvattenochavfall.se/avfall-och-atervinning/sortera-dina-sopor/sorteringsguiden/"
 DB = "database.db"
-
-# Temp for database tables
-all_recycle_places = {}
 
 def create_database(connection):
     """Initialize the database, creating the tables"""
@@ -82,6 +79,7 @@ def find_recycle_places(info, driver):
 
 
 def extract_info(connection):
+    """Extract info and store in SQLite DB if connection is provided, or Firebase Realtime DB otherwise"""
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--window-size=1920x1080")
@@ -92,34 +90,62 @@ def extract_info(connection):
 
     id = 0
     for item in elems:
-        print("-----------------------")
-
         name = item.get_attribute("data-item-name")
         synonyms = item.get_attribute("data-item-synonyms")
         type = item.get_attribute("data-item-type")
-        this_type_id = set_type(type, connection)
-
-        # Retrieve info of associated hazardous materials
         info = item.find_element_by_xpath('.//*[@class="toggle-target"]')
-        hazardous_materials_ids = find_hazardous_materials(info, connection)
-        store_associated_hazarduos_materials(id, hazardous_materials_ids, connection)
 
-        # TODO: Get all recycle places
-        find_recycle_places(info.find_elements_by_xpath('.//div[@class="table-cell wiki-search-info"]/*'), driver)
+        if connection is not None:
+            # SQLite DB connection provided
 
-        store_recyclable(id, name, this_type_id, connection)
-        store_synonyms(synonyms.split(","), id, connection)
+            this_type_id = set_type(type, connection)
+
+            # Retrieve info of associated hazardous materials
+            hazardous_materials_ids = find_hazardous_materials(info, connection)
+            store_associated_hazarduos_materials(id, hazardous_materials_ids, connection)
+
+            # TODO: Get all recycle places
+            find_recycle_places(info.find_elements_by_xpath('.//div[@class="table-cell wiki-search-info"]/*'), driver)
+
+            store_recyclable(id, name, this_type_id, connection)
+            store_synonyms(synonyms.split(","), id, connection)
+
+        else:
+            synonyms = synonyms.split(",")
+            synonyms.append(name)
+
+            # Retrieve info of associated hazardous materials
+            hazardous_materials = info.find_elements_by_xpath('.//div[contains(@class ,"hazardous-material")]')
+
+            # TODO: Get all recycle places
+
+            # Insert info into DB
+            firebase_connect.insert_recycleable(str(id), {'type': type})
+            for synonym in synonyms:
+                if len(synonym) > 0:
+                    firebase_connect.insert_name(str(id), {'name': synonym})
+            for material_info in hazardous_materials:
+                material = material_info.get_attribute("title")
+                if len(material) > 0:
+                    firebase_connect.insert_hazarduos_material(str(id), {'material': material})
 
         id += 1
 
     driver.quit()
 
 
-def main():
+def firebase_db():
+    firebase_connect.init()
+    extract_info(None)
+
+def sqlite_db():
     connection = sqlite.connect(DB)
     create_database(connection)
     extract_info(connection)
     connection.close()
+
+def main():
+    firebase_db()
 
 if __name__ == "__main__":
     main()
