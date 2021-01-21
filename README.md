@@ -8,17 +8,20 @@ This is a Python program to extract data about materials and how to recycle them
 
 [Sqlite3](https://docs.python.org/3/library/sqlite3.html) is used to store the gathered data in a SQLite database.
 
+[Firebase Realtime Database](https://firebase.google.com/docs/database/) and [firebase_admin](https://firebase.google.com/docs/reference/admin/python) can also be used to store the data.
+
 #### Running the program
 Clone the project and run following command from within the project folder:
 ```
 python scraper.py
 ```
 
-This starts the script which will scrape the web page for information and store it in a local database.
+This starts the script which will scrape the web page for information and store it in a database. Change the `main` function to choose database type.
 
 
 ### Database
-A [SQLite](https://sqlite.org/index.html) database is used to store the data. There are currently 6 tables in the database:
+#### SQLite
+A [SQLite](https://sqlite.org/index.html) database can be used to store the data. The setup currently consists of 6 tables in the database:
 
 ```
 RECYCLEABLES (ID,  NAME, TYPE)
@@ -29,9 +32,11 @@ ALL_HAZARDUOS_MATERIALS (ID, NAME)
 ASSOCIATED_HAZARDUOS_MATERIALS (ITEM, MATERIAL)
 ```
 
-
-#### Testing the database
+##### Testing the database
 Some simple tests to check what the database tables contain have been implemented in ``database_test.py``. This can be modified depending on what kind of tests need to be performed.
+
+#### Firebase Realtime Database
+The NoSQL database provided by Firebase can also be used. A Firebase project must then be created, and credentials provided and incorporated into the project. Change the path in the `init` function in the `firebase_connect.py` file.
 
 
 ### TODO
