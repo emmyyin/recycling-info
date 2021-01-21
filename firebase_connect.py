@@ -10,9 +10,10 @@ HAZARDUOS_MATERIALS = "hazardous"
 
 def init():
     global ROOT
-    cred = firebase_admin.credentials.Certificate("recycle-info-firebase-adminsdk.json")
+    path = "recycle-info-firebase-adminsdk.json"
+    cred = firebase_admin.credentials.Certificate(path)
     firebase_admin.initialize_app(cred)
-    fd = open('recycle-info-firebase-adminsdk.json','r')
+    fd = open(path,'r')
     data = json.load(fd)
     ROOT = db.reference(url=f"https://{data['project_id']}-default-rtdb.europe-west1.firebasedatabase.app/")
     fd.close()
