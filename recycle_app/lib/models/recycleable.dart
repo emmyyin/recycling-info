@@ -2,8 +2,8 @@ class Recycleable {
   int id;
   String type;
   List<String> names;
-  List<int> hazardous;
-  List<int> recyclePlaces;
+  List<String> hazardous;
+  List<String> recyclePlaces;
 
   Recycleable({this.id, this.type, this.names, this.hazardous, this.recyclePlaces});
 
