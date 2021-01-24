@@ -1,35 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:recycle_app/db_provider.dart';
-import 'package:recycle_app/models/hazardous_material.dart';
+
+// Import the firebase_core plugin
+import 'package:firebase_core/firebase_core.dart';
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(App());
 }
 
-class MyApp extends StatelessWidget {
+class App extends StatelessWidget {
+  // Create the initialization Future outside of `build`:
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Flutter Demo', 
-    home: Scaffold(
-      body: FutureBuilder<List<HazardousMaterial>>(
-        future: DBProvider.db.getAllHazardousMataerials(),
-        builder: (BuildContext context, AsyncSnapshot<List<HazardousMaterial>> snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                HazardousMaterial item = snapshot.data[index];
-                return ListTile(
-                  title: Text(item.name),
-                  leading: Text(item.id.toString()),
-                );
-              },
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-    ),);
+    return FutureBuilder(
+      // Initialize FlutterFire:
+      future: _initialization,
+      builder: (context, snapshot) {
+        // Check for errors
+        if (snapshot.hasError) {
+          return Scaffold();
+        }
+
+        // Once complete, show your application
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Scaffold();
+        }
+
+        // Otherwise, show something whilst waiting for initialization to complete
+        return CircularProgressIndicator();
+      },
+    );
   }
 }
