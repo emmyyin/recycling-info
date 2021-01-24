@@ -1,34 +1,33 @@
 import 'package:flutter/material.dart';
-
-// Import the firebase_core plugin
 import 'package:firebase_core/firebase_core.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(App());
+  runApp(MaterialApp(
+    home: App(),
+  ));
 }
 
 class App extends StatelessWidget {
-  // Create the initialization Future outside of `build`:
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      // Initialize FlutterFire:
       future: _initialization,
       builder: (context, snapshot) {
         // Check for errors
         if (snapshot.hasError) {
+          print("error");
           return Scaffold();
         }
 
-        // Once complete, show your application
+        // Once complete, show application
         if (snapshot.connectionState == ConnectionState.done) {
+          print("successful");
           return Scaffold();
         }
-
-        // Otherwise, show something whilst waiting for initialization to complete
+        
         return CircularProgressIndicator();
       },
     );
