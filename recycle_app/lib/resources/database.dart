@@ -12,7 +12,7 @@ class DBProvider {
 
   factory DBProvider() => _instance ?? DBProvider._internal();
 
-  /// Create Recycleable from data [item] from database 
+  /// Creates Recycleable from data [item] from database 
   Recycleable _recycableFromData(Map<dynamic, dynamic> item) {
     List<String> names = [];
     List<String> hazardous = [];
@@ -26,11 +26,12 @@ class DBProvider {
           .forEach((value) => hazardous.add(value["material"]));
     }
 
+    // TODO: Fix id
     return Recycleable(
         type: type, names: names, hazardous: hazardous, recyclePlaces: places);
   }
 
-  /// Get list of Recycleables retrieved from database
+  /// Returns of Recycleables retrieved from database
   Future<List<Recycleable>> getRecycleables() async {
     List<Recycleable> recycleables = [];
     await _databaseReference
