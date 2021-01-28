@@ -1,5 +1,5 @@
 class Recycleable {
-  int id;
+  String id;
   String type;
   List<String> names;
   List<String> hazardous;

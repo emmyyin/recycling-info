@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'package:recycle_app/resources/database.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
@@ -27,7 +29,7 @@ class App extends StatelessWidget {
           print("successful");
           return Scaffold();
         }
-        
+
         return CircularProgressIndicator();
       },
     );
