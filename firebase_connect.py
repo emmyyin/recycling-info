@@ -19,6 +19,9 @@ def init():
     fd.close()
     print("initialized")
 
+def get_key():
+    return ROOT.push().key
+
 def insert_recycleable(recycleable, post):
     """ Insert new recycleable """
     ROOT.child(RECYCLEABLES).child(recycleable).set(post)

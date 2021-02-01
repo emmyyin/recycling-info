@@ -109,6 +109,7 @@ def extract_info(connection):
 
             store_recyclable(id, name, this_type_id, connection)
             store_synonyms(synonyms.split(","), id, connection)
+            id += 1
 
         else:
             synonyms = synonyms.split(",")
@@ -120,16 +121,15 @@ def extract_info(connection):
             # TODO: Get all recycle places
 
             # Insert info into DB
-            firebase_connect.insert_recycleable(str(id), {'type': type})
+            id = firebase_connect.get_key()
+            firebase_connect.insert_recycleable(id, {'type': type})
             for synonym in synonyms:
                 if len(synonym) > 0:
-                    firebase_connect.insert_name(str(id), {'name': synonym})
+                    firebase_connect.insert_name(id, {'name': synonym})
             for material_info in hazardous_materials:
                 material = material_info.get_attribute("title")
                 if len(material) > 0:
-                    firebase_connect.insert_hazarduos_material(str(id), {'material': material})
-
-        id += 1
+                    firebase_connect.insert_hazarduos_material(id, {'material': material})
 
     driver.quit()
 
