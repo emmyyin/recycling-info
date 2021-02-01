@@ -5,6 +5,10 @@ import 'package:recycle_app/resources/database.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  DBProvider db = DBProvider();
+  db.getRecycleables();
+  
   runApp(MaterialApp(
     home: App(),
   ));

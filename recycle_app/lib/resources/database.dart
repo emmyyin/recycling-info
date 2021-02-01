@@ -12,8 +12,8 @@ class DBProvider {
 
   factory DBProvider() => _instance ?? DBProvider._internal();
 
-  /// Creates Recycleable from data [item] from database 
-  Recycleable _recycableFromData(Map<dynamic, dynamic> item) {
+  /// Creates Recycleable from data [item]
+  Recycleable _recycableFromData(String id, Map<dynamic, dynamic> item) {
     List<String> names = [];
     List<String> hazardous = [];
     List<String> places = [];
@@ -26,21 +26,24 @@ class DBProvider {
           .forEach((value) => hazardous.add(value["material"]));
     }
 
-    // TODO: Fix id
     return Recycleable(
-        type: type, names: names, hazardous: hazardous, recyclePlaces: places);
+        id: id,
+        type: type,
+        names: names,
+        hazardous: hazardous,
+        recyclePlaces: places);
   }
 
-  /// Returns of Recycleables retrieved from database
+  /// Returns Recycleables retrieved from database
   Future<List<Recycleable>> getRecycleables() async {
     List<Recycleable> recycleables = [];
     await _databaseReference
         .child("recycleables")
         .once()
         .then((DataSnapshot snapshot) {
-      // print('Data : ${snapshot.value}');
-      snapshot.value.forEach(
-          (childSnapshot) => recycleables.add(_recycableFromData(childSnapshot)));
+      snapshot.value.forEach((key, childSnapshot) {
+        recycleables.add(_recycableFromData(key, childSnapshot));
+      });
     });
 
     return recycleables;
