@@ -37,9 +37,3 @@ Some simple tests to check what the database tables contain have been implemente
 
 #### Firebase Realtime Database
 The NoSQL database provided by Firebase can also be used. A Firebase project must then be created, and credentials provided and incorporated into the project. Change the path in the `init` function in the `firebase_connect.py` file.
-
-
-### TODO
-- [X] Store data in a database, csv- or textfile
-- [ ] Get recycle place info of each material
-- [ ] Make some kind of graphical interface
