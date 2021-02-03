@@ -6,8 +6,21 @@ import 'package:recycle_app/ui/pages/search_page.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
-    home: App(),
+    home: ThemeApp(),
   ));
+}
+
+class ThemeApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Color(0xFF83bc78),
+        accentColor: Color(0xFFb178bc)
+      ),
+      home: App(),
+    );
+  }
 }
 
 class App extends StatelessWidget {
@@ -30,11 +43,8 @@ class App extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               title: Text("SorteraMera"),
-              titleSpacing: 00.0,
               centerTitle: true,
-              toolbarHeight: 60.2,
-              elevation: 0.00,
-              backgroundColor: Colors.greenAccent[400],
+              backgroundColor: Theme.of(context).primaryColor,
             ),
             body: SearchPage()
           );

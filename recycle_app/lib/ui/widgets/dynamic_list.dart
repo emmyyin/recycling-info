@@ -11,6 +11,7 @@ class DynamicList extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(r.names[0]),
+        trailing: Icon(Icons.arrow_right),
       ),
     );
   }
