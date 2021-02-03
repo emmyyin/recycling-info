@@ -46,15 +46,17 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+        child: Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16.0),
           child: TextField(
             controller: _textController,
-            decoration: InputDecoration(
-              hintText: 'Sök'
-            ),
+            decoration: InputDecoration(hintText: 'Sök'),
             textAlign: TextAlign.center,
             onChanged: _onItemChanged,
           ),
@@ -63,6 +65,6 @@ class _SearchPageState extends State<SearchPage> {
             ? CircularProgressIndicator()
             : Expanded(child: DynamicList(_searchList))
       ],
-    );
+    ));
   }
 }
