@@ -83,6 +83,7 @@ class InfoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
+        leading: BackButton(color: Colors.white,),
       ),
       body: Container(
         child: Column(
