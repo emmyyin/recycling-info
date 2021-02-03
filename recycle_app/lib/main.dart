@@ -16,7 +16,12 @@ class ThemeApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primaryColor: Color(0xFF83bc78),
-        accentColor: Color(0xFFb178bc)
+        accentColor: Color(0xFFb178bc),
+        textTheme: TextTheme(
+          headline1: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold),
+          subtitle1: TextStyle(fontSize: 18),
+          bodyText2: TextStyle(fontSize: 16)
+        )
       ),
       home: App(),
     );
@@ -42,7 +47,7 @@ class App extends StatelessWidget {
           print("successful");
           return Scaffold(
             appBar: AppBar(
-              title: Text("SorteraMera"),
+              title: Text("SorteraMera", style: Theme.of(context).textTheme.headline1,),
               centerTitle: true,
               backgroundColor: Theme.of(context).primaryColor,
             ),
