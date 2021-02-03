@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'package:recycle_app/resources/database.dart';
+import 'package:recycle_app/ui/pages/search_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  DBProvider db = DBProvider();
-  db.getRecycleables();
-  
   runApp(MaterialApp(
     home: App(),
   ));
@@ -31,7 +27,17 @@ class App extends StatelessWidget {
         // Once complete, show application
         if (snapshot.connectionState == ConnectionState.done) {
           print("successful");
-          return Scaffold();
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("SorteraMera"),
+              titleSpacing: 00.0,
+              centerTitle: true,
+              toolbarHeight: 60.2,
+              elevation: 0.00,
+              backgroundColor: Colors.greenAccent[400],
+            ),
+            body: SearchPage()
+          );
         }
 
         return CircularProgressIndicator();
