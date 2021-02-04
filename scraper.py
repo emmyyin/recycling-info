@@ -72,10 +72,24 @@ def find_hazardous_materials(info, connection):
 
 
 # TODO: Extract info and store in database
-def find_recycle_places(info, driver):
-    for item in info:
-        attr = driver.execute_script('var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;', item)
-        # print(attr)
+def find_recycle_places(info_rows):
+    places = []
+    for row in info_rows:
+        item = row.find_elements_by_xpath('.//div[starts-with(@class, "table-cell")]')
+        if item[0].get_attribute("innerHTML") == "Lämnas":
+            text = item[1].get_attribute("innerHTML").split('<span class="comma">, </span>')
+            for elem in text:
+                if len(elem) > 0:
+                    places.append(elem)
+    return places
+
+
+def find_extra_info(info_rows):
+    """Return extra 'Think about this' info if there is any"""
+    for row in info_rows:
+        item = row.find_elements_by_xpath('.//div[starts-with(@class, "table-cell")]')
+        if item[0].get_attribute("innerHTML") == "Tänk på":
+            return item[1].get_attribute("innerHTML")
 
 
 def extract_info(connection):
@@ -94,6 +108,7 @@ def extract_info(connection):
         synonyms = item.get_attribute("data-item-synonyms")
         type = item.get_attribute("data-item-type")
         info = item.find_element_by_xpath('.//*[@class="toggle-target"]')
+        info_rows = info.find_elements_by_xpath('.//div[@class="table-row"]')
 
         if connection is not None:
             # SQLite DB connection provided
@@ -104,8 +119,8 @@ def extract_info(connection):
             hazardous_materials_ids = find_hazardous_materials(info, connection)
             store_associated_hazarduos_materials(id, hazardous_materials_ids, connection)
 
-            # TODO: Get all recycle places
-            find_recycle_places(info.find_elements_by_xpath('.//div[@class="table-cell wiki-search-info"]/*'), driver)
+            # TODO: save to database
+            places = find_recycle_places(info_rows)
 
             store_recyclable(id, name, this_type_id, connection)
             store_synonyms(synonyms.split(","), id, connection)
@@ -118,18 +133,27 @@ def extract_info(connection):
             # Retrieve info of associated hazardous materials
             hazardous_materials = info.find_elements_by_xpath('.//div[contains(@class ,"hazardous-material")]')
 
-            # TODO: Get all recycle places
+            # Get recycle places
+            places = find_recycle_places(info_rows)
+
+            # Get extra information
+            extra_info = find_extra_info(info_rows)
 
             # Insert info into DB
             id = firebase_connect.get_key()
-            firebase_connect.insert_recycleable(id, {'type': type})
+            firebase_connect.insert_recycleable(id, {'type': type, 'extra': extra_info})
+
             for synonym in synonyms:
                 if len(synonym) > 0:
                     firebase_connect.insert_name(id, {'name': synonym})
+
             for material_info in hazardous_materials:
                 material = material_info.get_attribute("title")
                 if len(material) > 0:
                     firebase_connect.insert_hazarduos_material(id, {'material': material})
+
+            for place in places:
+                firebase_connect.insert_recycle_place(id, {'place': place})
 
     driver.quit()
 
