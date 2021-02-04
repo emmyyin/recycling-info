@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:recycle_app/ui/pages/search_page.dart';
 
@@ -17,10 +18,8 @@ class ThemeApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color(0xFF83bc78),
         accentColor: Color(0xFFb178bc),
-        textTheme: TextTheme(
-          headline1: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold),
-          subtitle1: TextStyle(fontSize: 18),
-          bodyText2: TextStyle(fontSize: 16)
+        textTheme: GoogleFonts.ralewayTextTheme(
+          Theme.of(context).textTheme
         )
       ),
       home: App(),
@@ -47,7 +46,7 @@ class App extends StatelessWidget {
           print("successful");
           return Scaffold(
             appBar: AppBar(
-              title: Text("SorteraMera", style: Theme.of(context).textTheme.headline1,),
+              title: Text("SorteraMera", style: TextStyle(fontSize: 26, color: Colors.white70),),
               centerTitle: true,
               backgroundColor: Theme.of(context).primaryColor,
             ),
