@@ -11,7 +11,8 @@ def create_database(connection):
     sqlite.update(connection, '''CREATE TABLE RECYCLEABLES
         (ID     INT PRIMARY KEY     NOT NULL,
         NAME    TEXT                NOT NULL,
-        TYPE    INT                 NOT NULL);''')
+        TYPE    INT                 NOT NULL,
+        EXTRA   TEXT);''')
 
     sqlite.update(connection, '''CREATE TABLE SYNONYMS
         (ID     INT     NOT NULL,
@@ -70,8 +71,6 @@ def find_hazardous_materials(info, connection):
         hazardous_materials_ids.append(id)
     return hazardous_materials_ids
 
-
-# TODO: Extract info and store in database
 def find_recycle_places(info_rows):
     places = []
     for row in info_rows:
@@ -82,7 +81,6 @@ def find_recycle_places(info_rows):
                 if len(elem) > 0:
                     places.append(elem)
     return places
-
 
 def find_extra_info(info_rows):
     """Return extra 'Think about this' info if there is any"""
