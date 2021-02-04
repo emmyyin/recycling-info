@@ -43,7 +43,7 @@ class InfoPage extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(20),
       child: Text(
-        "Kategori: " + recycleable.type,
+        "Sorteras som: " + recycleable.type,
       ),
     );
   }
@@ -76,6 +76,26 @@ class InfoPage extends StatelessWidget {
   // TODO: Implement this
   Widget _displayRecyclePlaces() {
     List<String> places = recycleable.recyclePlaces;
+    List<Widget> list =
+        places.map((place) => new Text(place)).toList();
+
+    return Center(
+      child: Column(
+        children: [
+          list.length > 1
+              ? Container(
+                  child: Text("Lämnas:"),
+                )
+              : Container(),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: list,
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -87,7 +107,7 @@ class InfoPage extends StatelessWidget {
       ),
       body: Container(
         child: Column(
-          children: [_displayNames(), _displayType(), _displayHazardous()],
+          children: [_displayNames(), _displayType(), _displayHazardous(), _displayRecyclePlaces()],
         ),
       ),
     );
