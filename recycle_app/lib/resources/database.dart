@@ -17,18 +17,26 @@ class DBProvider {
     List<String> names = [];
     List<String> hazardous = [];
     List<String> places = [];
+    String extra = "";
     String type = item["type"];
 
     item["names"].values.forEach((value) => names.add(value["name"]));
+    item["recycle_places"]
+        .values
+        .forEach((value) => places.add(value["place"]));
     if (item.containsKey("hazardous")) {
       item["hazardous"]
           .values
           .forEach((value) => hazardous.add(value["material"]));
     }
+    if (item.containsKey("extra")) {
+      extra = item["extra"];
+    }
 
     return Recycleable(
         id: id,
         type: type,
+        extra: extra,
         names: names,
         hazardous: hazardous,
         recyclePlaces: places);
