@@ -57,13 +57,13 @@ class InfoPage extends StatelessWidget {
       child: Column(
         children: [
           // Only display hazardous materials if there are any
-          list.length > 1
+          list.length > 0
               ? Container(
                   child: Text("Varningsklasser:"),
                 )
               : Container(),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
             child: Column(
               children: list,
             ),
@@ -73,22 +73,20 @@ class InfoPage extends StatelessWidget {
     );
   }
 
-  // TODO: Implement this
   Widget _displayRecyclePlaces() {
     List<String> places = recycleable.recyclePlaces;
-    List<Widget> list =
-        places.map((place) => new Text(place)).toList();
+    List<Widget> list = places.map((place) => new Text(place)).toList();
 
     return Center(
       child: Column(
         children: [
-          list.length > 1
+          list.length > 0
               ? Container(
                   child: Text("Lämnas:"),
                 )
               : Container(),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
             child: Column(
               children: list,
             ),
@@ -96,6 +94,17 @@ class InfoPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _displayExtraInfo() {
+    return recycleable.extra.length > 0
+        ? Container(
+            padding: EdgeInsets.all(20),
+            child: Text(
+              "Tänk på: " + recycleable.extra,
+            ),
+          )
+        : Container();
   }
 
   @override
@@ -103,11 +112,19 @@ class InfoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        leading: BackButton(color: Colors.white,),
+        leading: BackButton(
+          color: Colors.white,
+        ),
       ),
       body: Container(
         child: Column(
-          children: [_displayNames(), _displayType(), _displayHazardous(), _displayRecyclePlaces()],
+          children: [
+            _displayNames(),
+            _displayType(),
+            _displayHazardous(),
+            _displayRecyclePlaces(),
+            _displayExtraInfo()
+          ],
         ),
       ),
     );
